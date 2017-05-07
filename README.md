@@ -215,17 +215,69 @@ Now lets dive deeper into how and what you can configure with `WebpageParser`.
 #### new WebpageParser( name, options )
 
 **name**(`string`) - name of the resource you parse with this parser
+
 *options**(`object`) - config object
+
 
 **Options** object is very important and contains the following fields:
 
-    - `rootNode` (string): css selector of the node from which parsing should start 
-    - `excluded` (array[string]): array of css selectors of elements that should be ignored while parsing
-    - `finalNodes` (array[string]): array of css selectors that should not be inspected further. Children of that html element will not be parsed individually if their parent matches at least one of provided selectors
-    - `timeout` (number - in Milliseconds): delay before starting the request
-    - `getNextPaginatedPageURL` (function): function that is responsible for fetching url of the next pagination in order to continue parsing the page
-    - `fallback` (WebsiteParser): a parser that will be called if the current one cannot parse the DOM element. This model is useful for defining template parsers and extend them when you need.
+**`rootNode`** (string): css selector of the node from which parsing should start 
 
+**`excluded`** (array[string]): array of css selectors of elements that should be ignored while parsing
+
+**`finalNodes`** (array[string]): array of css selectors that should not be inspected further. Children of that html element will not be parsed individually if their parent matches at least one of provided selectors
+
+**`timeout`** (number - in Milliseconds): delay before starting the request
+
+**`getNextPaginatedPageURL`** (function): function that is responsible for fetching url of the next pagination in order to continue parsing the page
+
+**`fallback`** (WebsiteParser): a parser that will be called if the current one cannot parse the DOM element. This model is useful for defining template parsers and extend them when you need.
+
+```js
+  /*
+  * Full example of all possible options
+  */
+  new Shameless.WebpageScraper('default', {
+    rootNode: '.article-body', // start parsing from this node
+    finalNodes: ['blockquote', 'img'], // do not continue parsing children of these nodes
+
+    // fetch title manually by providing the selector and parse function that
+    // prepends data array with result of its execution
+    selectors: [new Selector('postTitle', { css_selector: '#postTitle', _return: 'cheerio' })],
+    // this function will have `postTitle` value inside its data parameter
+    // `cheerio` field is a cheerio object for this element, so that you can
+    // fetch info more easily
+    afterFetchFunc: function (data) {
+      if ( data['postTitle'] ) 
+        return utils.fetchText(data['postTitle'][0])
+    },
+
+    // func to find next paginated page URL when resource is multipage
+    // or return FALSE when no next page found
+    getNextPaginatedPageURL: function () {
+      let button = this.$('#bot-next')
+
+      // just regular page, without pagination => quit
+      if ( !button ) return false
+
+      let url = button.attr('href') 
+      let text = button.attr('alt')
+
+      // cancel if the info is missing or leading to the next post
+      if ( !text || text.toLowerCase().trim().indexOf('next post') >= 0 || !url ) 
+        return false
+
+      return url
+    },
+
+    // what scraper to use on elements for which current
+    // scraper did not provide `elementParser` (useful for generic scrapers)
+    fallback: fallbackScraper,
+    timeout: 0
+  })
+```
+
+This was long, I have to admit that. However, it is extremely important to have in place, since all other functionalities of `Shameless` are based on `WebpageScraper` and, essentially, are just extensions of it.
 
 ### Website Scraper
 

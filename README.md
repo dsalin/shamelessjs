@@ -28,7 +28,7 @@ const Shameless = require('../src/lib/Shameless.class').default
 // initialize scraper that starts scraping from '#intl_homepage1-zone-1' node
 const mediumScraper = new Shameless.WebpageScraper('medium-index')
   .addElementParser(['.promo-title', '.promo-subtitle'], (elem, info) => ({
-    __name__: 'Main/Subtitle Title',
+    name: 'Main/Subtitle Title',
     value: elem.text().trim()
   }))
 
@@ -55,9 +55,9 @@ What you will see is something like this:
   contentType: 'text/html; charset=utf-8',
   url: 'https://medium.com/',
   content:
-   [ { __name__: 'Main/Subtitle Title',
+   [ { name: 'Main/Subtitle Title',
        value: 'Stories that move with you.' },
-     { __name__: 'Main/Subtitle Title',
+     { name: 'Main/Subtitle Title',
        value: 'An app designed for readers on the go.' } ] }
 ```
 
@@ -82,7 +82,7 @@ Now we will grab author name, avatar, short summary about the writer and the tit
     // our scraper defined in the first example
     new Shameless.WebpageScraper('medium-index')
       .addElementParser(['.promo-title', '.promo-subtitle'], (elem, info) => ({
-        __name__: 'Main/Subtitle Title',
+        name: 'Main/Subtitle Title',
         value: elem.text().trim()
       }))
   )
@@ -151,7 +151,7 @@ const Shameless = require('../src/lib/Shameless.class').default
 // initialize scraper that starts scraping from '#intl_homepage1-zone-1' node
 const mediumScraper = new Shameless.WebpageScraper('medium-index')
   .addElementParser(['.promo-title', '.promo-subtitle'], (elem, info) => ({
-    __name__: 'Main/Subtitle Title',
+    name: 'Main/Subtitle Title',
     value: elem.text().trim()
   }))
 
@@ -181,9 +181,9 @@ And the result is:
   contentType: 'text/html; charset=utf-8',
   url: 'https://medium.com/',
   content:
-   [ { __name__: 'Main/Subtitle Title',
+   [ { name: 'Main/Subtitle Title',
        value: 'Stories that move with you.' },
-     { __name__: 'Main/Subtitle Title',
+     { name: 'Main/Subtitle Title',
        value: 'An app designed for readers on the go.' } ] }
 ```
 
@@ -216,22 +216,17 @@ Now lets dive deeper into how and what you can configure with `WebpageParser`.
 
 **name**(`string`) - name of the resource you parse with this parser
 
-*options**(`object`) - config object
+**options**(`object`) - config object
 
 
 **Options** object is very important and contains the following fields:
 
-**`rootNode`** (string): css selector of the node from which parsing should start 
-
-**`excluded`** (array[string]): array of css selectors of elements that should be ignored while parsing
-
-**`finalNodes`** (array[string]): array of css selectors that should not be inspected further. Children of that html element will not be parsed individually if their parent matches at least one of provided selectors
-
-**`timeout`** (number - in Milliseconds): delay before starting the request
-
-**`getNextPaginatedPageURL`** (function): function that is responsible for fetching url of the next pagination in order to continue parsing the page
-
-**`fallback`** (WebsiteParser): a parser that will be called if the current one cannot parse the DOM element. This model is useful for defining template parsers and extend them when you need.
+    **`rootNode`** (string): css selector of the node from which parsing should start<br/>
+    **`excluded`** (array[string]): array of css selectors of elements that should be ignored while parsing<br/>
+    **`finalNodes`** (array[string]): array of css selectors that should not be inspected further. Children of that html element will not be parsed individually if their parent matches at least one of provided selectors<br/>
+    **`timeout`** (number - in Milliseconds): delay before starting the request<br/>
+    **`getNextPaginatedPageURL`** (function): function that is responsible for fetching url of the next pagination in order to continue parsing the page<br/>
+    **`fallback`** (WebsiteParser): a parser that will be called if the current one cannot parse the DOM element. This model is useful for defining template parsers and extend them when you need.<br/>
 
 ```js
   /*

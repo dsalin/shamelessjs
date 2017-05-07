@@ -7,10 +7,10 @@
 
 const _ = require('lodash')
 
-const Logger = require('./Logger.class')
-const WebsiteScraper = require('./WebsiteScraper.class')
-const WebpageScraper = require('./WebpageScraper.class')
-const Formatter = require('./Formatter.class')
+const Logger = require('./lib/Logger.class')
+const WebsiteScraper = require('./lib/WebsiteScraper.class')
+const WebpageScraper = require('./lib/WebpageScraper.class')
+const Formatter = require('./lib/Formatter.class')
 
 // -------- Setup Constants ---------
 const DNS_FRIENDLY = true
@@ -18,7 +18,7 @@ const DETAILED_LOGS = false
 const DEFAULT_FILE_PATH = './'
 
 class Shameless {
-  constructor( options ) {
+  constructor( options = {} ) {
     this._formatters = {}
     // collection of Website/Webpage Parsers (Resources)
     this._resources = {}
@@ -36,6 +36,8 @@ class Shameless {
       scrape: [],
       format: []
     }
+
+    this.setup(options)
   }
 
   setup ( options ) {

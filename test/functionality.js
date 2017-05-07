@@ -3,7 +3,7 @@
 */
 
 (async function() {
-  const Shameless = require('../src/lib/Shameless.class').default
+  const Shameless = require('../src/Shameless.class').default
 
   // create base object for further config
   const shame = new Shameless({ dnsFriendly: true })

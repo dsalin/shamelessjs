@@ -214,19 +214,18 @@ Now lets dive deeper into how and what you can configure with `WebpageParser`.
 
 #### new WebpageParser( name, options )
 
-**name**(`string`) - name of the resource you parse with this parser
-
+**name**(`string`) - name of the resource you parse with this parser<br/>
 **options**(`object`) - config object
 
 
 **Options** object is very important and contains the following fields:
 
-    **`rootNode`** (string): css selector of the node from which parsing should start<br/>
-    **`excluded`** (array[string]): array of css selectors of elements that should be ignored while parsing<br/>
-    **`finalNodes`** (array[string]): array of css selectors that should not be inspected further. Children of that html element will not be parsed individually if their parent matches at least one of provided selectors<br/>
-    **`timeout`** (number - in Milliseconds): delay before starting the request<br/>
-    **`getNextPaginatedPageURL`** (function): function that is responsible for fetching url of the next pagination in order to continue parsing the page<br/>
-    **`fallback`** (WebsiteParser): a parser that will be called if the current one cannot parse the DOM element. This model is useful for defining template parsers and extend them when you need.<br/>
+**`rootNode`** (string): css selector of the node from which parsing should start<br/>
+**`excluded`** (array[string]): array of css selectors of elements that should be ignored while parsing<br/>
+**`finalNodes`** (array[string]): array of css selectors that should not be inspected further. Children of that html element will not be parsed individually if their parent matches at least one of provided selectors<br/>
+**`timeout`** (number - in Milliseconds): delay before starting the request<br/>
+**`getNextPaginatedPageURL`** (function): function that is responsible for fetching url of the next pagination in order to continue parsing the page<br/>
+**`fallback`** (WebsiteParser): a parser that will be called if the current one cannot parse the DOM element. This model is useful for defining template parsers and extend them when you need.<br/>
 
 ```js
   /*

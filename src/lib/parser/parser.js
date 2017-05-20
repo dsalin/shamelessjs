@@ -10,7 +10,7 @@ const validator = require('validator')
 // custom Error object
 const ParserError = require('./parser-error')
 const Selector = require('./selector')
-const PhantomRender = require('../phantom/phantom-render')
+const PhantomRender = require('../phantom/phantom-render').phantomRender
 
 // default time limit for data
 // recieving and parsing
@@ -305,6 +305,7 @@ Parser.prototype.fetchpage = function( url ) {
   }) // Promise
 }
 
+// This is experimental and should not be used in production
 Parser.prototype.fetchRenderedPage = function ( url ) {
       // bind getMeta to current this obj
   let getMetaSelf = Parser.prototype.getMeta.bind(this)

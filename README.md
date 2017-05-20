@@ -19,7 +19,7 @@ aims to provide a complete tool for scraping not just individual pages, but comp
 
 ## Basic Usage
 
-Lets take a simple example by getting latest CNN News article info:
+Lets take a simple example by getting Promo Title and Subtitle of Medium main page:
 
 ```js
 // taken from /test/simple.js
@@ -74,52 +74,31 @@ Now we will grab author name, avatar, short summary about the writer and the tit
   // taken from /test/scrape-em.js
   const Shameless = require('../src/Shameless.class').default
 
-  // init Shameless object for more complicated use
-  const shame = new Shameless
+  // scraper for individual post page
+  const scraper = new Shameless.WebpageScraper('medium-post')
+    .addElementParser(['.postMetaLockup .avatar-image'], (elem, info) => ({
+      name: 'Writer Avatar Image',
+      value: elem.attr('src').trim()
+    }))
 
-  // initialize scraper that starts scraping from '#intl_homepage1-zone-1' node
-  shame.addResource(
-    // our scraper defined in the first example
-    new Shameless.WebpageScraper('medium-index')
-      .addElementParser(['.promo-title', '.promo-subtitle'], (elem, info) => ({
-        name: 'Main/Subtitle Title',
-        value: elem.text().trim()
-      }))
-  )
-  .addResource(
-    // scraper for individual post page
-    new Shameless.WebpageScraper('medium-post')
-      .addElementParser(['.postMetaLockup .avatar-image'], (elem, info) => ({
-        name: 'Writer Avatar Image',
-        value: elem.attr('src').trim()
-      }))
+    .addElementParser(['.postMetaLockup .u-flex1 a.link'], (elem, info) => ({
+      name: 'Writer Name',
+      value: elem.text().trim()
+    }))
 
-      .addElementParser(['.postMetaLockup .u-flex1 a.link'], (elem, info) => ({
-        name: 'Writer Name',
-        value: elem.text().trim()
-      }))
+    .addElementParser(['.postMetaLockup div.postMetaInline'], (elem, info) => ({
+      name: 'Writer Summary',
+      value: elem.text().trim()
+    }))
 
-      .addElementParser(['.postMetaLockup div.postMetaInline'], (elem, info) => ({
-        name: 'Writer Summary',
-        value: elem.text().trim()
-      }))
+    .addElementParser(['h1.graf'], (elem, info) => ({
+      name: 'Post Title',
+      value: elem.text().trim()
+    }))
 
-      .addElementParser(['h1.graf'], (elem, info) => ({
-        name: 'Post Title',
-        value: elem.text().trim()
-      }))
-  )
-
-  try {
-    const result = await shame
-      // no ads here, just a good article :D
-      .scrape('medium-post', 'https://medium.com/@the1mills/a-better-mutex-for-node-js-4b4897fd9f11')
-      .exec()
-
-    console.log(result[0].content)
-  } catch (err) {
-    console.log(err)
-  }
+    // no ads here, just a good article :D
+    const result = await scraper.scrape('medium-post', 'https://medium.com/@the1mills/a-better-mutex-for-node-js-4b4897fd9f11')
+    console.log(result.content)
 ```
 
 And this is the desired output:
@@ -134,7 +113,7 @@ And this is the desired output:
   { name: 'Post Title', value: 'A better mutex for Node.js' } ]
 ```
 
-Note that all the meta tags are preserved on the `result` object, similar to first example.
+Note that all the meta tags are preserved in the `result` object, similar to first example.
 
 **Great**, now that we have seen some examples, it is time to get into details and more advanced use cases.
 
@@ -271,11 +250,98 @@ Now lets dive deeper into how and what you can configure with `WebpageParser`.
   })
 ```
 
-This was long, I have to admit that. However, it is extremely important to have in place, since all other functionalities of `Shameless` are based on `WebpageScraper` and, essentially, are just extensions of it.
+This was long, I have to admit that. However, it is extremely important to have in place, since all other functionalities of **`Shameless`** are based on **`WebpageScraper`** and, essentially, are just extensions of it.
 
 ### Website Scraper
 
+This type of scraper is taking advantage of **`WebpageScraper`** with some additional options.
+Essentially, **`WebsiteScraper`** just takes several **`WebpageScrapers`** and applies them to the website as a whole, not just individual pages. Therefore, you can scrape the whole website if you provide necessary configuration.
+
+First of all, lets have some quick example of that before we proceed to the details.
+This time we'll scrape `iogames.network`, since its content is server-side generated, so we don't have
+any possible problems with `js` generated content:
+
+```js
+const fs = require('fs')
+const Shameless = require('../src/Shameless.class').default
+
+// ----------- RESOURCES -------------
+const websiteScraper = new Shameless.WebsiteScraper('iogames-site')
+
+// Provide your own way of extracting anchor links from the pages
+// This links will be used to crawl other pages on the website
+websiteScraper.__anchorElementParser__ = {
+  selector: ['h3.title'],
+  parserFunc: (elem, info) => ({
+    __name__: Shameless.WebsiteScraper.ANCHOR_TAG_PARSER_PREFIX,
+    value: `http://iogames.network/games?game=${elem.text().trim().toLowerCase().replace('.', '')}`
+  })
+}
+
+const iogamesGame = new Shameless.WebpageScraper('iogames-game', {
+  // renderBeforeProcess: true,
+  rootNode: 'body',
+  exclude: [
+    'script',
+    'footer',
+    '.featured'
+  ],
+
+  timeout: 1000
+})
+
+.addElementParser(['p.desc'], (elem, info) => ({
+  __name__: 'desc-text',
+  value: elem.text().trim()
+}))
+
+.addElementParser(['h1.title'], (elem, info) => ({
+  __name__: 'Game Title',
+  value: elem.text().trim()
+}))
+
+.addElementParser(['.promo-img img'], (elem, info) => ({
+  __name__: 'Game Img',
+  value: elem.attr('src').trim()
+}))
+
+websiteScraper.addWebpageScraper(/^http:\/\/iogames.network\/?$/, new Shameless.WebpageScraper('index'))
+websiteScraper.addWebpageScraper(/^http:\/\/iogames.network\/games\?game=/, iogamesGame)
+
+await websiteScraper.scrape('http://iogames.network', {
+  maxDepthLevel: 2,
+  maxPages: 5
+})
+console.log('Result: ', websiteScraper.__tmp_result__)
+fs.writeFileSync('./result.json', JSON.stringify(websiteScraper.__tmp_result__, null, 2))
+```
+
+Here, we parse the `index` page of `iogames.network` and provide a custom link extracting function.<br/>
+This function just parses the necessary elements on the page to get links in order to parse other pages that belong to
+this website. By default, all the **`anchor`** tags that belong to this domain are taken. Provide your own function if
+you want to overwrite this.
+
+#### WebsiteParser API
+
+**`Shameless.WebsiteScraper(name)`** - constructor<br/>
+**`name`**(string): name of the parser (will come in handy when discussing **Transformers**)<br/>
+
+**`Shameless.WebsiteScraper.prototype.addWebpageScraper(pageRegx, scraper)`**<br/>
+Add a new scraper to the collection of scrapers.<br/>
+**`pageRegx`**(RegExp): regular expression to match page url with page parser
+**`scraper`**(Shameless.WebpageScraper): regular webpage scraper discussed above<br/>
+
+**`Shameless.WebsiteScraper.prototype.scrape(url, options)`**<br/>
+**`url`**(string): URL address of the web page to scrape(index page)<br/>
+**`options`**(Object): options object to further customize the scraping behaviour<br/>
+
+Currently, only two options are supported:<br/>
+**`maxDepthLevel`**(Number): how deep should the scraper parse the website(starting from 1)<br/>
+**`maxPages`**(Number): how many pages should be scraped<br/>
+
 ### Shameless Object
+
+Coming soon...
 
 ## Transformers
 

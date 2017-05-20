@@ -55,15 +55,12 @@ class WebsiteScraper {
     let tmpScraper, scraper
 
     // index page is being parsed, i.e parsing just started
-    if ( depth === 0 ) {
-      this.clearCache()
-      // check for the index page (starting point for scrape/crawl)
-      scraper = this.__pageScrapers__['index']
-      if ( !scraper ) throw new Error(`[${this.name}] No Scraper for index page found`)
-    }
-    else {
-      scraper = this.getPageScraper(url)
-      if ( !scraper ) throw new Error(`[${this.name}] No Scraper for page ${url} found`)
+    if ( depth === 0 ) this.clearCache()
+
+    scraper = this.getPageScraper(url)
+    if ( !scraper ) {
+      console.log(`[${this.name}] No Scraper for page ${url} found`)
+      return
     }
 
     const scrapeResult = await scraper.scrape(url)
@@ -76,6 +73,7 @@ class WebsiteScraper {
     // recursively start scraping other pages
     const links = WebsiteScraper.extractCrawlLinks(scrapeResult)
     const nextLevelData = []
+    console.log('Links: ', links)
     for ( let i = 0; i < links.length; i += 1 ) {
       if ( this.__scrape_count__ + i < maxPages ) {
         nextLevelData.push(this.scrape(links[i], options, depth))
@@ -92,14 +90,8 @@ class WebsiteScraper {
       scraper, anchorElementParser || this.__anchorElementParser__
     )
 
-    if ( scraper.name === 'index' ) {
-      this.__pageScrapers__['index'] = scraper
-      this.__pageRegx__['index'] = regx
-    }
-    else {
-      this.__pageScrapers__[scraper.name] = scraper
-      this.__pageRegx__[scraper.name] = regx
-    }
+    this.__pageScrapers__[scraper.name] = scraper
+    this.__pageRegx__[scraper.name] = regx
 
     return this
   }

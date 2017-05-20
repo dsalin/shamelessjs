@@ -13,7 +13,7 @@
     // our scraper defined in the first example
     new Shameless.WebpageScraper('medium-index')
       .addElementParser(['.promo-title', '.promo-subtitle'], (elem, info) => ({
-        __name__: 'Main/Subtitle Title',
+        name: 'Main/Subtitle Title',
         value: elem.text().trim()
       }))
   )

@@ -3,7 +3,7 @@
 */
 (async function () {
   // taken from /test/simple.js
-  const Shameless = require('../src/lib/Shameless.class').default
+  const Shameless = require('../src/Shameless.class').default
 
   // initialize scraper that starts scraping from '#intl_homepage1-zone-1' node
   const cnnParser = new Shameless.WebpageScraper('medium')

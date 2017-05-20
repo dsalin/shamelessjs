@@ -1,4 +1,5 @@
 var system = require('system')
+var fs = require('fs')
 var page   = require('webpage').create()
 
 var url = system.args[1]
@@ -8,6 +9,13 @@ var url = system.args[1]
 
 // for some reason, this setting is the most stable
 page.settings.userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 PhantomJS/1.9.0'
+
+//  page.onLoadFinished = function() {
+//   page.render('export.png')
+//   fs.write('1.html', page.content, 'w')
+//   console.log(page.content)
+//   phantom.exit()
+// };
 
 // render the page, and run the callback function
 page.open(url, status => {

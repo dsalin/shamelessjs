@@ -15,7 +15,6 @@ aims to provide a complete tool for scraping not just individual pages, but comp
     - [Wesite Scraper](#wesite-scraper)
     - [Shameless Object](#shameless-object)
 - [Transformers](#transformers)
-- [Template Parsers](#template-parsers)
 - [Some Important Details](#some-important-details)
 - [Future](#future)
 
@@ -325,15 +324,15 @@ you want to overwrite this.
 
 #### WebsiteParser API
 
-**`Shameless.WebsiteScraper(name)`** - constructor<br/>
+#### **`Shameless.WebsiteScraper(name)`** - constructor<br/>
 **`name`**(string): name of the parser (will come in handy when discussing **Transformers**)<br/>
 
-**`Shameless.WebsiteScraper.prototype.addWebpageScraper(pageRegx, scraper)`**<br/>
+#### **`Shameless.WebsiteScraper.prototype.addWebpageScraper(pageRegx, scraper)`**<br/>
 Add a new scraper to the collection of scrapers.<br/>
 **`pageRegx`**(RegExp): regular expression to match page url with page parser
 **`scraper`**(Shameless.WebpageScraper): regular webpage scraper discussed above<br/>
 
-**`Shameless.WebsiteScraper.prototype.scrape(url, options)`**<br/>
+#### **`Shameless.WebsiteScraper.prototype.scrape(url, options)`**<br/>
 **`url`**(string): URL address of the web page to scrape(index page)<br/>
 **`options`**(Object): options object to further customize the scraping behaviour<br/>
 

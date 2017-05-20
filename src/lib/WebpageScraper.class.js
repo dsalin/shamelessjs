@@ -138,10 +138,6 @@ class WebpageScraper {
     })
   }
 
-  // TODO: implement this not to copy above code twice
-  // _fetch( url, translate = false ) {
-  // }
-
   /**
   * Traverse the DOM in DFS manner starting
   * from the root element and apply

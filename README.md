@@ -14,7 +14,7 @@ aims to provide a complete tool for scraping not just individual pages, but comp
     - [Webpage Scraper](#webpage-scraper)
     - [Wesite Scraper](#wesite-scraper)
     - [Shameless Object](#shameless-object)
-- [Transformers](#transformers)
+- [Formatters](#transformers)
 - [Some Important Details](#some-important-details)
 - [Future](#future)
 
@@ -339,11 +339,83 @@ Currently, only two options are supported:<br/>
 
 ### Shameless Object
 
-Coming soon...
+Essentially, **`Shameless`** is just a convenient wrapper of all the things we've discussed
+before. It is just better to use it in case you have multiple things to execute. However,
+if you don't need to, just skip it.<br/>
+What can be better than an example? Right, nothing if you read this page.
 
-## Transformers
+```js
+const Shameless = require('../src/Shameless.class').default
+const shame = new Shameless
 
-Yea, we have those as well.
+// ----------- RESOURCES -------------
+
+const iogames = new Shameless.WebpageScraper('index')
+  // define element parsers here
+
+const iogamesGame = new Shameless.WebpageScraper('iogames-game')
+  // define element parsers here
+
+shame.addResource([iogames, iogamesGame])
+
+// --------- FORMATTERS --------------
+
+// Formatters just take your input and produce output in a pipelined fashion
+shame
+  .addFormatter(new Shameless.Formatter('empty', input => input.content.map(c => c.value)))
+  .addFormatter(new Shameless.Formatter('strip', input => input.map(c => c.slice(0, 20))))
+
+// parse the webpage you've configured
+try {
+  console.log(await shame
+    .scrape('index', ['http://iogames.network', 'http://iogames.network/games?game=slitherio'])
+    .scrape('iogames-game', 'http://iogames.network/games?game=agario')
+
+    // Formatters just take your input and produce output in a pipelined fashion
+    // Therefore, empty filter will execute, produce an output and pass this output to `strip` filter
+    .format('empty', 'strip')
+    .exec())
+} catch (err) {
+  console.log("ERR:", err)
+}
+```
+
+Nothing unfamiliar here I suppose. We've just added a couple of new functions to wrap things up.
+Lets describe them more:
+
+### Shameless Object API
+Important thing to note here is that we call the **`.exec()`** function at the end.
+This is important, since we want to chain functions (hopefully elegantly) with transformers, so that
+we can use the same transformers for different resources and don't waste a lot of typing.
+
+#### **`new Shameless`** - constructor<br/>
+
+#### **`Shameless.prototype.addResource(resource)`**<br/>
+Add new resource/resources to Shameless.<br/>
+**`resource`**(WebsiteScraper | WebpageScraper): Shameless resource types described before, any of those or a
+combination<br/>
+
+#### **`Shameless.prototype.scrape(resourceName, resourceURLs)`**<br/>
+**`resourceName`**(string): name of the **registered** resource to scrape<br/>
+**`resourceURLs`**(string | [string]): resource URLs to scrape<br/>
+
+#### **`Shameless.prototype.exec()`**<br/>
+Execute all the chained functions defined before, so that a combined result comes out.
+
+## Formatters
+As discussed before, **`Formatters`** are just filter functions that transform input(scraped content or content from
+the previous filter), generate output and pass it as input to the next filter. The result can be anything: from plain
+text files to comprehensive `xml` sheets or `pdf` documents, it is all just functions in the end.
+
+### Formatter API
+
+#### **`new Shameless.Formatter(name, func)`**<br/>
+**`name`**(string): name of the formatter (useful in chaining)<br/>
+**`func`**(Funciton): transform function<br/>
+
+#### **`Formatter.prototype.format(input)`**<br/>
+**`input`**(any): input provided from the scraper or previous filter
+
 
 ## Some Important Details
 

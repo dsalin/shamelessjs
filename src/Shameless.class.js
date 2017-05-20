@@ -109,12 +109,7 @@ class Shameless {
   }
 
   format( ...formatters ) {
-    // TODO: improve this
-    // this.__format_cache__ = _.cloneDeep(this.__raw_cache__)
-
     this.__tmp_operations__.format = formatters
-    Logger.green(`Added formatters`, formatters)
-
     return this
   }
 
@@ -138,9 +133,8 @@ class Shameless {
   }
 
   addResource( parser ) {
-    if ( _.isArray(parser) ) {
+    if ( _.isArray(parser) )
       _.forEach(parser, p => this._resources[p.name] = p)
-    }
     else this._resources[parser.name] = parser
 
     return this

@@ -193,13 +193,10 @@ with an empty `content` field. Like this (again, from our very first example):
 Now lets dive deeper into how and what you can configure with `WebpageParser`.
 
 #### new WebpageParser( name, options )
-
 **name**(`string`) - name of the resource you parse with this parser<br/>
 **options**(`object`) - config object
 
-
-**Options** object is very important and contains the following fields:
-
+**Options** object is very important and contains the following fields:<br/>
 **`rootNode`** (string): css selector of the node from which parsing should start<br/>
 **`excluded`** (array[string]): array of css selectors of elements that should be ignored while parsing<br/>
 **`finalNodes`** (array[string]): array of css selectors that should not be inspected further. Children of that html element will not be parsed individually if their parent matches at least one of provided selectors<br/>
@@ -322,17 +319,17 @@ This function just parses the necessary elements on the page to get links in ord
 this website. By default, all the **`anchor`** tags that belong to this domain are taken. Provide your own function if
 you want to overwrite this.
 
-#### WebsiteParser API
+### WebsiteParser API
 
 #### **`Shameless.WebsiteScraper(name)`** - constructor<br/>
 **`name`**(string): name of the parser (will come in handy when discussing **Transformers**)<br/>
 
-#### **`Shameless.WebsiteScraper.prototype.addWebpageScraper(pageRegx, scraper)`**<br/>
+#### **`WebsiteScraper.prototype.addWebpageScraper(pageRegx, scraper)`**<br/>
 Add a new scraper to the collection of scrapers.<br/>
-**`pageRegx`**(RegExp): regular expression to match page url with page parser
+**`pageRegx`**(RegExp): regular expression to match page url with page parser<br/>
 **`scraper`**(Shameless.WebpageScraper): regular webpage scraper discussed above<br/>
 
-#### **`Shameless.WebsiteScraper.prototype.scrape(url, options)`**<br/>
+#### **`WebsiteScraper.prototype.scrape(url, options)`**<br/>
 **`url`**(string): URL address of the web page to scrape(index page)<br/>
 **`options`**(Object): options object to further customize the scraping behaviour<br/>
 

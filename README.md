@@ -1,5 +1,7 @@
 # Shameless.js - simple website scraper for NodeJS
 
+![Shameless.js Img](https://github.com/dsalin/shamelessjs/blob/master/shameless.jpeg)
+
 It might appear as a 'another' webpage parser/scraper/whatever you want to call it. However, `Shameless.js`
 aims to provide a complete tool for scraping not just individual pages, but complete websites.
 

@@ -1,59 +1,24 @@
 var chai = require('chai')
 // var chaiHttp = require('chai-http')
-var EPL = require('../dist/index')
-var should = chai.should()
+var Shameless = require('../src/Shameless.class').default
+const assert = chai.assert
 
-describe('Simple without AutoRegister', function() {
-  describe('Plugin Construction', function() {
+describe('Construction', function() {
+  describe('Shameless Construction', function() {
+    it('Should return object of type Shameless', function () {
+      assert.instanceOf(new Shameless, Shameless)
+    })
   })
-
-  describe('Register Events', function() {
+  describe('WebsiteScraper Construction', function() {
+    it('Should return object of type Shameless.WebsiteScraper', function () {
+      const websiteScraper = new Shameless.WebsiteScraper('iogames-site')
+      assert.instanceOf(websiteScraper, Shameless.WebsiteScraper)
+    })
   })
-
-  describe('Check results after emitting', function() {
-  })
-})
-
-describe('Simple with AutoRegister', function() {
-  describe('Plugin Construction', function() {
-  })
-
-  describe('Register Events', function() {
-  })
-
-  describe('Check results after emitting', function() {
-  })
-})
-
-describe('Without AutoRegister with Advanced settings', function() {
-  describe('Plugin Construction', function() {
-  })
-
-  describe('Register Advanced Event handler', function() {
-  })
-
-  describe('Check results after emitting', function() {
-  })
-})
-
-describe('AutoRegister with Advanced settings', function() {
-  describe('Plugin Construction', function() {
-  })
-
-  describe('Register Events', function() {
-  })
-
-  describe('Check results after emitting', function() {
-  })
-})
-
-describe('Advanced test with multiple plugins', function() {
-  describe('Plugin Construction', function() {
-  })
-
-  describe('Register Events', function() {
-  })
-
-  describe('Check results after emitting', function() {
+  describe('WebpageScraper Construction', function() {
+    it('Should return object of type Shameless.WebpageScraper', function () {
+      const parser = new Shameless.WebpageScraper('example')
+      assert.instanceOf(parser, Shameless.WebpageScraper)
+    })
   })
 })

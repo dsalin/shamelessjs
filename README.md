@@ -12,7 +12,7 @@ aims to provide a complete tool for scraping not just individual pages, but comp
 - [Basic Usage](#basic-usage)
 - [Scrape em all!](#scrape-em-all)
     - [Webpage Scraper](#webpage-scraper)
-    - [Wesite Scraper](#wesite-scraper)
+    - [Website Scraper](#website-scraper)
     - [Shameless Object](#shameless-object)
 - [Formatters](#transformers)
 - [Some Important Details](#some-important-details)
